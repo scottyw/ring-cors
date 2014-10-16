@@ -4,7 +4,7 @@
 
 (deftest test-allow-request?
   (testing "with empty vector"
-    (is (not (allow-request? {:headers {"origin" "http://eample.com"}}
+    (is (not (allow-request? {:headers {"origin" "http://example.com"}}
                              {:access-control-allow-origin []}))))
   (testing "with one regular expressions"
     (are [origin expected]
@@ -72,9 +72,25 @@
 
 (deftest test-no-cors-header-when-handler-returns-nil
   (is (nil? ((wrap-cors (fn [_] nil)
-                        :access-control-allow-origin #".*example.com")
+               :access-control-allow-origin #".*example.com")
              {:request-method
-              :get :uri "/"
+                       :get :uri "/"
+              :headers {"origin" "http://example.com"}}))))
+
+(deftest test-no-cors-header-when-handler-returns-nil-and-matching-methods-supplied
+  (is (nil? ((wrap-cors (fn [_] nil)
+               :access-control-allow-origin #".*example.com"
+               :access-control-allow-methods [:get])
+             {:request-method
+                       :get :uri "/"
+              :headers {"origin" "http://example.com"}}))))
+
+(deftest test-no-cors-header-when-handler-returns-nil-and-unmatching-methods-supplied
+  (is (nil? ((wrap-cors (fn [_] nil)
+               :access-control-allow-origin #".*example.com"
+               :access-control-allow-methods [:post])
+             {:request-method
+                       :get :uri "/"
               :headers {"origin" "http://example.com"}}))))
 
 (deftest test-options-without-cors-header

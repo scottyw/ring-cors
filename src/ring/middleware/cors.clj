@@ -42,12 +42,13 @@
 (defn add-access-control
   "Add the access control headers using the request's origin to the response."
   [request response access-control]
-  (if-let [origin (origin request)]
-    (update-in response [:headers] merge
-               (->> origin
-                    (assoc access-control :access-control-allow-origin)
-                    (normalize-headers)))
-    response))
+  (if ((complement nil?) response)
+    (if-let [origin (origin request)]
+      (update-in response [:headers] merge
+                 (->> origin
+                      (assoc access-control :access-control-allow-origin)
+                      (normalize-headers)))
+      response)))
 
 (defn wrap-cors
   "Middleware that adds Cross-Origin Resource Sharing headers.
