@@ -77,7 +77,7 @@
                        :get :uri "/"
               :headers {"origin" "http://example.com"}}))))
 
-(deftest test-no-cors-header-when-handler-returns-nil-and-matching-methods-supplied
+(deftest test-no-cors-header-when-handler-returns-nil-with-matching-method
   (is (nil? ((wrap-cors (fn [_] nil)
                :access-control-allow-origin #".*example.com"
                :access-control-allow-methods [:get])
@@ -85,7 +85,7 @@
                        :get :uri "/"
               :headers {"origin" "http://example.com"}}))))
 
-(deftest test-no-cors-header-when-handler-returns-nil-and-unmatching-methods-supplied
+(deftest test-no-cors-header-when-handler-returns-nil-with-unmatching-method
   (is (nil? ((wrap-cors (fn [_] nil)
                :access-control-allow-origin #".*example.com"
                :access-control-allow-methods [:post])
